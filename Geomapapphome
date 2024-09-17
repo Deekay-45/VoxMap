@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geospatial Mapping Platform</title>
+    <style>
+        /* General Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica', sans-serif;
+            background-color: #eaf6ff; /* Light blue background */
+            color: #333;
+        }
+
+        header {
+            background-color: #4a90e2; /* Darker blue for header */
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .main-container {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .main-container h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .main-container p {
+            font-size: 1.2em;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: #555;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cta-buttons a {
+            padding: 15px 30px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+            font-size: 1.2em;
+            transition: background-color 0.3s;
+        }
+
+        .cta-buttons .launch-btn {
+            background-color: #4a90e2;
+        }
+
+        .cta-buttons .learn-btn {
+            background-color: #50b5e9;
+        }
+
+        .cta-buttons a:hover {
+            opacity: 0.9;
+        }
+
+        .feature-section {
+            background-color: #ffffff;
+            padding: 60px 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .feature-section h3 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .feature {
+            width: 250px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f0faff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        .feature h4 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #4a90e2;
+        }
+
+        .feature p {
+            font-size: 1em;
+            color: #666;
+        }
+
+        footer {
+            background-color: #4a90e2;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5em;
+            }
+
+            .main-container h2 {
+                font-size: 2em;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .features {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .main-container h2 {
+                font-size: 1.8em;
+            }
+
+            .cta-buttons a {
+                font-size: 1em;
+                padding: 12px 20px;
+            }
+
+            .feature {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Geospatial Mapping Platform</h1>
+        <p>Advanced voice-enabled geospatial navigation</p>
+    </header>
+
+    <div class="main-container">
+        <h2>Welcome to the Future of Mapping</h2>
+        <p>Experience the power of voice commands in mapping. Explore terrain, vegetation, and satellite views with ease. Calculate distances, find highways, and much more using your voice!</p>
+
+        <div class="cta-buttons">
+            <a href="geomapapp.html" class="launch-btn">Launch Map</a>
+            <a href="#learn-more" class="learn-btn">Learn More</a>
+        </div>
+    </div>
+
+    <div class="feature-section" id="learn-more">
+        <h3>Features</h3>
+        <div class="features">
+            <div class="feature">
+                <img src="https://img.icons8.com/ios-filled/100/4a90e2/map.png" alt="Voice Command">
+                <h4>Voice Commands</h4>
+                <p>Use your voice to navigate through different views, zoom in, zoom out, or find locations.</p>
+            </div>
+            <div class="feature">
+                <img src="https://img.icons8.com/ios-filled/100/4a90e2/distance.png" alt="Distance Calculator">
+                <h4>Distance Calculator</h4>
+                <p>Calculate distances between cities, highways, and train tracks instantly.</p>
+            </div>
+            <div class="feature">
+                <img src="https://img.icons8.com/ios-filled/100/4a90e2/satellite.png" alt="Map Views">
+                <h4>Multiple Map Views</h4>
+                <p>Switch between terrain, satellite, vegetation, and street views with a single command.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Geospatial Mapping Platform. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
