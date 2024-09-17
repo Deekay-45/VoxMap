@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geospatial Map with Voice Commands</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            width: 100%;
+            height: 90vh;
+        }
+
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #controls button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #controls button:disabled {
+            background-color: #aaa;
+        }
+
+        #distance-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            #controls {
+                width: 90%;
+                left: 5%;
+                top: 20px;
+            }
+
+            #controls button {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            #distance-info {
+                bottom: 20px;
+                left: 5%;
+                right: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <button id="start-recording">Start Voice Command</button>
+        <button id="stop-recording" disabled>Stop Voice Command</button>
+        <button id="calculate-distance">Calculate Distance</button>
+    </div>
+
+    <div id="map"></div>
+    <div id="distance-info" style="display: none;">Distance: <span id="distance"></span> km</div>
+
+    <script>
+        // Initialize Leaflet map
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        // Tile Layers
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+        var satelliteLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+        var terrainLayer = L.tileLayer('https://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.png', { maxZoom: 19 });
+        var vegetationLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+        var streetLayer = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', { maxZoom: 19 });
+
+        let recognizer;
+        let isRecording = false;
+        let distanceMarkers = [];
+        let selectedLayer = osmLayer;
+
+        // Start Voice Command
+        document.getElementById('start-recording').addEventListener('click', async () => {
+            recognizer = speechCommands.create('BROWSER_FFT');
+            await recognizer.ensureModelLoaded();
+
+            recognizer.listen(result => {
+                const words = recognizer.wordLabels();
+                const command = words[argMax(result.scores)];
+                handleVoiceCommand(command);
+            }, {
+                includeSpectrogram: false,
+                probabilityThreshold: 0.75
+            });
+
+            isRecording = true;
+            document.getElementById('start-recording').disabled = true;
+            document.getElementById('stop-recording').disabled = false;
+        });
+
+        // Stop Voice Command
+        document.getElementById('stop-recording').addEventListener('click', () => {
+            if (isRecording) {
+                recognizer.stopListening();
+                isRecording = false;
+                document.getElementById('start-recording').disabled = false;
+                document.getElementById('stop-recording').disabled = true;
+            }
+        });
+
+        // Function to handle voice commands
+        function handleVoiceCommand(command) {
+            switch (command.toLowerCase()) {
+                case 'zoom in':
+                    map.zoomIn();
+                    break;
+                case 'zoom out':
+                    map.zoomOut();
+                    break;
+                case 'go to new york':
+                    map.setView([40.7128, -74.0060], 13); // New York
+                    break;
+                case 'show vegetation':
+                    switchLayer(vegetationLayer);
+                    break;
+                case 'terrain view':
+                    switchLayer(terrainLayer);
+                    break;
+                case 'street view':
+                    switchLayer(streetLayer);
+                    break;
+                case 'show highways':
+                    // Dummy example: Highlighting highways
+                    // In reality, highways data could be a GeoJSON layer
+                    alert('Showing highways (Functionality to be added)');
+                    break;
+                case 'show train tracks':
+                    // Dummy example: Highlighting train tracks
+                    // In reality, train tracks data could be a GeoJSON layer
+                    alert('Showing train tracks (Functionality to be added)');
+                    break;
+                case 'mark new york':
+                    L.marker([40.7128, -74.0060]).addTo(map).bindPopup('New York').openPopup();
+                    break;
+                case 'current location':
+                    getCurrentLocation();
+                    break;
+                default:
+                    console.log('Command not recognized:', command);
+            }
+        }
+
+        // Utility function to switch between layers
+        function switchLayer(newLayer) {
+            map.removeLayer(selectedLayer);
+            map.addLayer(newLayer);
+            selectedLayer = newLayer;
+        }
+
+        // Get user's current location
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    map.setView([latitude, longitude], 13);
+                }, () => {
+                    alert('Geolocation is not supported by this browser.');
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        // Calculate distance between two markers
+        document.getElementById('calculate-distance').addEventListener('click', () => {
+            map.on('click', addMarkerForDistance);
+        });
+
+        function addMarkerForDistance(e) {
+            const marker = L.marker(e.latlng).addTo(map);
+            distanceMarkers.push(marker);
+
+            if (distanceMarkers.length === 2) {
+                const latlngs = distanceMarkers.map(m => m.getLatLng());
+                const distance = latlngs[0].distanceTo(latlngs[1]) / 1000; // Convert to km
+
+                document.getElementById('distance-info').style.display = 'block';
+                document.getElementById('distance').textContent = distance.toFixed(2);
+
+                distanceMarkers.forEach(marker => map.removeLayer(marker));
+                distanceMarkers = [];
+                map.off('click', addMarkerForDistance);
+            }
+        }
+
+        function argMax(array) {
+            return array.indexOf(Math.max(...array));
+        }
+    </script>
+</body>
+</html>
